@@ -12,23 +12,19 @@ annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if th
 
 %-------------END OF SETTINGS-------------
 
+%Reco-PC returns complex signal (not spectrum)
 load(path+"\data.mat");
 load(path+"\par.mat");
 
-%Data_raw = importdata(path+"\sp_21032024_1520298_98_2_wip_t1w_tseV4.raw");
 dim = size(Data);
 
 %Take all phase encoding lines and concatenate them horizontally
-Data = reshape(Data, [1 dim(2)*dim(1) dim(3) dim(4)]);
+Data = reshape(Data, [1 dim(2)*dim(1) dim(3) dim(4)]); 
+Data = permute(Data, [2 4 1 3]); %dimensions samples, coils
 
-%FFT for all coil elements separatly
-for k = 1:dim(4)
-    Data(:, 1, 1, k) = fft(Data(:, 1, 1, k));
-end
-
-%Sum over coil elements
+%For every sample, sum absolute values from all coils and normalize
 Data = abs(Data);
-Data = squeeze(sum(Data, 4));
+Data = sum(Data, 2);
 Data = double(Data/max(Data));
 
 fig = figure('WindowState', 'maximized');
@@ -38,7 +34,7 @@ fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
 options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 1 inf], 'StartPoint', [0 0 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(X, transpose(Data), fttype, options);
+ft=fit(X, Data, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
