@@ -44,7 +44,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T2 decay during TSE of "+chemicalSpecies);
+title("T2 decay of "+chemicalSpecies+" during TSE");
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
