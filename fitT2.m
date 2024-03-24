@@ -5,7 +5,7 @@ clc;
 %-------------SETTINGS-------------
 
 echoSpacing = 25.8; %ms;
-numberOfEchoes = 150;
+numberOfPhaseEncodingSteps = 150; %number of echo spacings is numberOfPhaseEncodingSteps-1
 path = "C:\Users\menze\Desktop\Matlab\MR_Data\2024_03_22_1";
 chemicalSpecies = "Lactate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
@@ -28,7 +28,7 @@ Data = sum(Data, 2);
 Data = double(Data/max(Data));
 
 fig = figure('WindowState', 'maximized');
-X = transpose(linspace(1, echoSpacing*numberOfEchoes, length(Data)));
+X = transpose(linspace(1, echoSpacing*(numberOfPhaseEncodingSteps-1), length(Data)));
 plot(X, Data, "+");
 fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
