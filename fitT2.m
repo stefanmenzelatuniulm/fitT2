@@ -5,8 +5,8 @@ clc;
 %-------------SETTINGS-------------
 
 echoSpacing = 25.8; %ms;
-numberOfPhaseEncodingSteps = 150; %number of echo spacings is numberOfPhaseEncodingSteps-1
-path = "C:\Users\menze\Desktop\Matlab\MR_Data\2024_03_22_1";
+numberOfPhaseEncodingSteps = 155; %number of echo spacings is numberOfPhaseEncodingSteps-1
+path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_03_22\T2Lac\114";
 chemicalSpecies = "Lactate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
 
