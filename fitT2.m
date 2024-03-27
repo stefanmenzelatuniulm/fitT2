@@ -4,10 +4,9 @@ clc;
 
 %-------------SETTINGS-------------
 
-echoSpacing = 25.8; %ms;
-numberOfPhaseEncodingSteps = 155; %number of echo spacings is numberOfPhaseEncodingSteps-1
-path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_03_22\T2Lac\114";
-chemicalSpecies = "Lactate"; %Name(s) of the chemical species
+echoSpacing = 18.7; %ms;
+path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_03_26\T2Bic1\156";
+chemicalSpecies = "Bicarbonate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
 
 %-------------END OF SETTINGS-------------
@@ -16,19 +15,18 @@ annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if th
 load(path+"\data.mat");
 load(path+"\par.mat");
 
+Data = abs(Data); %FID
+Data = mean(Data, 1); %Mean in readout direction / for every k-space-line
+Data = permute(Data, [2 4 1 3]); %dimensions k-space-lines, coils
+Data = sum(Data, 2); %Sum over coils
+Data = double(Data/max(Data)); %Normalize
+
+%Determine echo placements. Each echo corresponds to 1 line in k-space
 dim = size(Data);
-
-%Take all phase encoding lines and concatenate them horizontally
-Data = reshape(Data, [1 dim(2)*dim(1) dim(3) dim(4)]); 
-Data = permute(Data, [2 4 1 3]); %dimensions samples, coils
-
-%For every sample, sum absolute values from all coils and normalize
-Data = abs(Data);
-Data = sum(Data, 2);
-Data = double(Data/max(Data));
+numberOfPhaseEncodingSteps = dim(1);
+X = transpose(echoSpacing/2:echoSpacing:echoSpacing*(2*numberOfPhaseEncodingSteps-1)/2);
 
 fig = figure('WindowState', 'maximized');
-X = transpose(linspace(1, echoSpacing*(numberOfPhaseEncodingSteps-1), length(Data)));
 plot(X, Data, "+");
 fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
