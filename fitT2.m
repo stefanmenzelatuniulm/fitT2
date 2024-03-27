@@ -4,8 +4,8 @@ clc;
 
 %-------------SETTINGS-------------
 
-echoSpacing = 19.7; %ms;
-path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_03_26\T2Bic2\157";
+echoSpacing = 250; %ms;
+path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_03_27\T2Bic\170";
 chemicalSpecies = "Bicarbonate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
 
