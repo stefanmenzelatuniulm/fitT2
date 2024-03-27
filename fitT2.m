@@ -4,8 +4,8 @@ clc;
 
 %-------------SETTINGS-------------
 
-echoSpacing = 18.7; %ms;
-path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_03_26\T2Bic1\156";
+echoSpacing = 19.7; %ms;
+path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_03_26\T2Bic2\157";
 chemicalSpecies = "Bicarbonate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
 
@@ -16,7 +16,7 @@ load(path+"\data.mat");
 load(path+"\par.mat");
 
 Data = abs(Data); %FID
-Data = mean(Data, 1); %Mean in readout direction / for every k-space-line
+Data = mean(Data, 1); %Mean over readout direction / for every k-space-line
 Data = permute(Data, [2 4 1 3]); %dimensions k-space-lines, coils
 Data = sum(Data, 2); %Sum over coils
 Data = double(Data/max(Data)); %Normalize
