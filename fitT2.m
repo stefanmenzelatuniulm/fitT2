@@ -15,8 +15,21 @@ annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if th
 load(path+"\data.mat");
 load(path+"\par.mat");
 
+dim = size(Data);
+
 Data = abs(Data); %FID
-Data = mean(Data, 1); %Mean over readout direction / for every k-space-line
+
+%Echo tops are centers of k-space lines in readout direction
+if mod(dim(1), 2) == 0
+    Data1 = Data(ceil(end/2), :, :, :);
+    Data2 = Data(ceil(end/2)+1, :, :, :);
+    Data = (Data1+Data2)/2;
+else
+    Data = Data(ceil(end/2), :, :, :);
+end
+
+%Data = mean(Data, 1); %Dürfte ich das statt Zeile 23-29?
+
 Data = permute(Data, [2 4 1 3]); %dimensions k-space-lines, coils
 Data = sum(Data, 2); %Sum over coils
 Data = double(Data/max(Data)); %Normalize
