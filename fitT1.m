@@ -5,7 +5,8 @@ clc;
 %-------------SETTINGS-------------
 
 tau = exp(linspace(log(10),log(10000),12)); %ms;
-folderName = "C:\Users\menze\Desktop\Matlab\MR_Data\2024_03_28\T1Lac";
+%tau = [0 1 10 100 250 527.3 1053.5 1579.8 2106.1 2632.3 3158.6 3684.8 4211.1 4737.4 5263.6 5789.9 6316.2 6842.4 7368.7 7894.9 8421.2 8947.5 9473.7 10000];
+folderName = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_03_28\T1Lac";
 chemicalSpecies = "Lactate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
 
@@ -64,7 +65,7 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
 ft=fit(transpose(tau), Data, fttype, options);
 coeffvals = coeffvalues(ft);
@@ -261,5 +262,58 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center.fig");
 saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center.svg");
+
+close all;
+
+%Alternatively: Take mean in readout direction and mean in phase encoding
+%direction
+
+d = dir(folderName);
+dFolders = d([d(:).isdir]);
+dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+subFolders = zeros(1, length(dFolders));
+Data = [];
+for k = 1:length(dFolders)
+    subFolders(1, k) = string(dFolders(k).name);
+end
+load(folderName+"\"+subFolders(1, k)+"\data.mat");
+dim = size(Data);
+Data2 = zeros([length(dFolders), dim]);
+for k = 1:length(dFolders)
+    load(folderName+"\"+subFolders(1, k)+"\data.mat");
+    Data2(k, :, :, :, :) = Data;
+end
+Data = sum(Data2, 4); %Sum over averages
+Data = double(abs(Data)); %FID
+Data = squeeze(sum(Data, 5)); %Sum over coils
+Data = mean(Data, 2);
+Data = mean(Data, 3);
+dim = size(Data);
+clear Data2;
+
+Data = Data/max(Data, [], "all"); %Normalize
+
+fig = figure('WindowState', 'maximized');
+plot(tau, Data, "+");
+fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+coeffs=["M0" "C" "T1"];
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+fttype = fittype(fitfunction, coefficients=coeffs);
+ft=fit(transpose(tau), Data, fttype, options);
+coeffvals = coeffvalues(ft);
+ci = confint(ft, 0.95);
+str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+hold on;
+ax = gca;
+plot(ax, ft, "r");
+xlim([0 max(tau)]);
+legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+title("T1 relaxation of "+chemicalSpecies+" during IR");
+xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+
+saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean.fig");
+saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean.svg");
 
 close all;
