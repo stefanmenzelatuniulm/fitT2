@@ -4,9 +4,9 @@ clc;
 
 %-------------SETTINGS-------------
 
-echoSpacing = 19.7; %ms;
-path = "C:\Users\menze\Desktop\Matlab\MR_Data\2024_03_26\T2Bic2\157";
-chemicalSpecies = "Bicarbonate"; %Name(s) of the chemical species
+echoSpacing = 25.8; %ms;
+path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_04_17\Lactate_NSAg1";
+chemicalSpecies = "Lactate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
 
 %-------------END OF SETTINGS-------------
@@ -17,7 +17,12 @@ load(path+"\par.mat");
 
 dim = size(Data);
 
-Data = sum(Data, 3); %Sum over averages
+%Data = sum(Data, 12); 
+%Sum over averages
+%CARE: ODD AND EVEN AVERAGES ARE FLIPPED
+Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
+Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data = Data_odd+Data_even;
 Data = double(abs(Data)); %FID
 Data = squeeze(sum(Data, 4)); %Sum over coils
 
@@ -67,7 +72,11 @@ saveas(fig, path+chemicalSpecies+"_TSEDecay.svg");
 load(path+"\data.mat");
 load(path+"\par.mat");
 
-Data = sum(Data, 3); %Sum over averages
+%Data = sum(Data, 12); 
+%Sum over averages
+Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
+Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data = Data_odd+Data_even;
 Data = double(abs(Data)); %FID
 Data = squeeze(sum(Data, 4)); %Sum over coils
 Data = mean(Data, 1); %Mean over readout direction
@@ -107,7 +116,11 @@ close all;
 load(path+"\data.mat");
 load(path+"\par.mat");
 
-Data = sum(Data, 3); %Sum over averages
+%Data = sum(Data, 12); 
+%Sum over averages
+Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
+Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data = Data_odd+Data_even;
 Data = double(abs(Data)); %FID
 Data = squeeze(sum(Data, 4)); %Sum over coils
 Data = max(Data, [], 1); 
@@ -147,7 +160,11 @@ close all;
 load(path+"\data.mat");
 load(path+"\par.mat");
 
-Data = sum(Data, 3); %Sum over averages
+%Data = sum(Data, 12); 
+%Sum over averages
+Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
+Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data = Data_odd+Data_even;
 Data = double(abs(Data)); %FID
 Data = squeeze(sum(Data, 4)); %Sum over coils
 m = max(Data, [], "all"); 
