@@ -7,13 +7,14 @@ clc;
 %tau = exp(linspace(log(10),log(10000),12)); %ms;
 %tau = [0 1 10 100 250 527.3 1053.5 1579.8 2106.1 2632.3 3158.6 3684.8 4211.1 4737.4 5263.6 5789.9 6316.2 6842.4 7368.7 7894.9 8421.2 8947.5 9473.7 10000];
 %tau = [0 1 10 100 250 527.3 1053.5 1579.8];
+%tau = [0 2632.3 3158.6 100 250 527.3 1053.5 1579.8 2106.1 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 tau = [0 100 250 527.3 1053.5 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau = [0 100 250 527.3 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
-folderName = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_04_19\T1Ala";
+folderName = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_04_19\Alanin\T1Ala";
 chemicalSpecies = "Alanine"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
+outlierIndices = [5];
 
-%TODO: implement that outliers at certain indices are removed from fit
 %-------------END OF SETTINGS-------------
 
 d = dir(folderName);
@@ -71,9 +72,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -83,12 +86,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_center_flipped_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_center_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.svg");
 
 close all;
 
@@ -129,9 +132,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -141,12 +146,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_max_flipped_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_max_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.svg");
 
 close all;
 
@@ -189,9 +194,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -201,12 +208,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.svg");
 
 close all;
 
@@ -256,9 +263,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -268,12 +277,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.svg");
 
 close all;
 
@@ -311,9 +320,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -323,12 +334,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.svg");
 
 close all;
 
@@ -387,9 +398,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -399,12 +412,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_center_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_center_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.svg");
 
 close all;
 
@@ -443,9 +456,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -455,12 +470,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_max_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_max_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.svg");
 
 close all;
 
@@ -501,9 +516,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -513,12 +530,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_max_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_max_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.svg");
 
 close all;
 
@@ -566,9 +583,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -578,12 +597,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.svg");
 
 close all;
 
@@ -619,9 +638,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -631,12 +652,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean_absLast.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_absLast.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_absLast.svg");
 
 close all;
 
@@ -697,9 +718,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -709,12 +732,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_center_flipped.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_center_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.svg");
 
 close all;
 
@@ -755,9 +778,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -767,12 +792,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_max_flipped.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_max_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.svg");
 
 close all;
 
@@ -815,9 +840,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -827,12 +854,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_max_flipped.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_max_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.svg");
 
 close all;
 
@@ -882,9 +909,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -894,12 +923,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center_flipped.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.svg");
 
 close all;
 
@@ -937,9 +966,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -949,12 +980,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean_flipped.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.svg");
 
 close all;
 
@@ -1013,9 +1044,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -1025,12 +1058,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_center.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_center.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.svg");
 
 close all;
 
@@ -1069,9 +1102,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -1081,12 +1116,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_max.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_max.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.svg");
 
 close all;
 
@@ -1127,9 +1162,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -1139,12 +1176,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_max.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_max.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.svg");
 
 close all;
 
@@ -1192,9 +1229,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -1204,12 +1243,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_center.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.svg");
 
 close all;
 
@@ -1245,9 +1284,11 @@ fig = figure('WindowState', 'maximized');
 plot(tau, Data, "+");
 fitfunction="abs(M0*(1-C*exp(-x/T1)))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 1000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(transpose(tau), Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(transpose(fitTau), fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
@@ -1257,12 +1298,12 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T1 relaxation of "+chemicalSpecies+" during IR");
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean.fig");
-saveas(fig, folderName+chemicalSpecies+"_IRDecay_mean_mean.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.fig");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.svg");
 
 close all;
 

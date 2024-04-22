@@ -4,10 +4,11 @@ clc;
 
 %-------------SETTINGS-------------
 
-echoSpacing = 25.8; %ms;
-path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_04_19\T2Ala\197";
-chemicalSpecies = "Alanine"; %Name(s) of the chemical species
+echoSpacing = 37.4; %ms;
+path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_04_19\Bicarbonate\T2Bic\26";
+chemicalSpecies = "Bicarbonate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
+outlierIndices = [];
 
 %-------------END OF SETTINGS-------------
 
@@ -52,7 +53,9 @@ fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
 options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 1 inf], 'StartPoint', [0 0 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(X, Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitX = X(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(fitX, fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
@@ -62,7 +65,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T2 decay of "+chemicalSpecies+" during TSE");
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -97,7 +100,9 @@ fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
 options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 1 inf], 'StartPoint', [0 0 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(X, Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitX = X(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(fitX, fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
@@ -107,7 +112,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T2 decay of "+chemicalSpecies+" during TSE");
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -141,7 +146,9 @@ fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
 options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 1 inf], 'StartPoint', [0 0 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(X, Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitX = X(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(fitX, fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
@@ -151,7 +158,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T2 decay of "+chemicalSpecies+" during TSE");
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -187,7 +194,9 @@ fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
 options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 1 inf], 'StartPoint', [0 0 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(X, Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitX = X(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(fitX, fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
@@ -197,7 +206,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T2 decay of "+chemicalSpecies+" during TSE");
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -244,7 +253,9 @@ fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
 options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 1 inf], 'StartPoint', [0 0 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(X, Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitX = X(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(fitX, fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
@@ -254,7 +265,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T2 decay of "+chemicalSpecies+" during TSE");
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -289,7 +300,9 @@ fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
 options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 1 inf], 'StartPoint', [0 0 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(X, Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitX = X(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(fitX, fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
@@ -299,7 +312,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T2 decay of "+chemicalSpecies+" during TSE");
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -333,7 +346,9 @@ fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
 options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 1 inf], 'StartPoint', [0 0 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(X, Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitX = X(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(fitX, fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
@@ -343,7 +358,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T2 decay of "+chemicalSpecies+" during TSE");
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -379,7 +394,9 @@ fitfunction="C+M0*exp(-x/T2)";
 coeffs=["C" "M0" "T2"];
 options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 1 inf], 'StartPoint', [0 0 1000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
-ft=fit(X, Data, fttype, options);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitX = X(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(fitX, fitData, fttype, options);
 coeffvals = coeffvalues(ft);
 ci = confint(ft, 0.95);
 str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
@@ -389,7 +406,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("T2 decay of "+chemicalSpecies+" during TSE");
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
