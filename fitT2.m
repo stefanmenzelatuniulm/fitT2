@@ -65,7 +65,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -112,7 +112,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -158,7 +158,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -206,7 +206,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -265,7 +265,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -312,7 +312,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -358,7 +358,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -406,7 +406,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(X)]);
 legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 

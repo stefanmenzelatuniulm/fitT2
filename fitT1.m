@@ -86,7 +86,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -146,7 +146,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -208,7 +208,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -277,7 +277,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -334,7 +334,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -412,7 +412,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -470,7 +470,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -530,7 +530,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -597,7 +597,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -652,7 +652,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -732,7 +732,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -792,7 +792,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -854,7 +854,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -923,7 +923,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -980,7 +980,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -1058,7 +1058,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -1116,7 +1116,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -1176,7 +1176,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -1243,7 +1243,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
@@ -1298,7 +1298,7 @@ ax = gca;
 plot(ax, ft, "r");
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
 xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
