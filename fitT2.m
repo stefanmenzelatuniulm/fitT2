@@ -71,6 +71,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, path+chemicalSpecies+"_TSEDecay_absLast.fig");
 saveas(fig, path+chemicalSpecies+"_TSEDecay_absLast.svg");
+saveas(fig, path+chemicalSpecies+"_TSEDecay_absLast.png");
 
 %ALTERNATIVELY: Echo Tops have approx. all the signal, rest of readout
 %dimension has approx. no signal if T2* << T2 -> mean over readout gives
@@ -118,6 +119,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, path+chemicalSpecies+"_TSEDecay_mean_absLast.fig");
 saveas(fig, path+chemicalSpecies+"_TSEDecay_mean_absLast.svg");
+saveas(fig, path+chemicalSpecies+"_TSEDecay_mean_absLast.png");
 
 close all;
 
@@ -164,6 +166,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, path+chemicalSpecies+"_TSEDecay_max_absLast.fig");
 saveas(fig, path+chemicalSpecies+"_TSEDecay_max_absLast.svg");
+saveas(fig, path+chemicalSpecies+"_TSEDecay_max_absLast.png");
 
 close all;
 
@@ -212,6 +215,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, path+chemicalSpecies+"_TSEDecay_max2_absLast.fig");
 saveas(fig, path+chemicalSpecies+"_TSEDecay_max2_absLast.svg");
+saveas(fig, path+chemicalSpecies+"_TSEDecay_max2_absLast.png");
 
 close all;
 
@@ -271,6 +275,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, path+chemicalSpecies+"_TSEDecay.fig");
 saveas(fig, path+chemicalSpecies+"_TSEDecay.svg");
+saveas(fig, path+chemicalSpecies+"_TSEDecay.png");
 
 %ALTERNATIVELY: Echo Tops have approx. all the signal, rest of readout
 %dimension has approx. no signal if T2* << T2 -> mean over readout gives
@@ -318,6 +323,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, path+chemicalSpecies+"_TSEDecay_mean.fig");
 saveas(fig, path+chemicalSpecies+"_TSEDecay_mean.svg");
+saveas(fig, path+chemicalSpecies+"_TSEDecay_mean.png");
 
 close all;
 
@@ -364,6 +370,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, path+chemicalSpecies+"_TSEDecay_max.fig");
 saveas(fig, path+chemicalSpecies+"_TSEDecay_max.svg");
+saveas(fig, path+chemicalSpecies+"_TSEDecay_max.png");
 
 close all;
 
@@ -412,5 +419,6 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, path+chemicalSpecies+"_TSEDecay_max2.fig");
 saveas(fig, path+chemicalSpecies+"_TSEDecay_max2.svg");
+saveas(fig, path+chemicalSpecies+"_TSEDecay_max2.png");
 
 close all;

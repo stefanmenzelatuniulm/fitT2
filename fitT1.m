@@ -92,6 +92,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.png");
 
 close all;
 
@@ -152,6 +153,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.png");
 
 close all;
 
@@ -214,6 +216,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.png");
 
 close all;
 
@@ -283,6 +286,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.png");
 
 close all;
 
@@ -340,6 +344,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.png");
 
 close all;
 
@@ -418,6 +423,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.png");
 
 close all;
 
@@ -476,6 +482,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.png");
 
 close all;
 
@@ -536,6 +543,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.png");
 
 close all;
 
@@ -603,6 +611,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.png");
 
 close all;
 
@@ -658,6 +667,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_absLast.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_absLast.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_absLast.png");
 
 close all;
 
@@ -738,6 +748,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.png");
 
 close all;
 
@@ -798,6 +809,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.png");
 
 close all;
 
@@ -860,6 +872,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.png");
 
 close all;
 
@@ -929,6 +942,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.png");
 
 close all;
 
@@ -986,6 +1000,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.png");
 
 close all;
 
@@ -1064,6 +1079,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.png");
 
 close all;
 
@@ -1122,6 +1138,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.png");
 
 close all;
 
@@ -1182,6 +1199,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.png");
 
 close all;
 
@@ -1249,6 +1267,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.png");
 
 close all;
 
@@ -1304,6 +1323,7 @@ ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fonts
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.fig");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.svg");
+saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.png");
 
 close all;
 
