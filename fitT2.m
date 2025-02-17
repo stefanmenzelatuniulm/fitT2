@@ -5,7 +5,7 @@ clc;
 %-------------SETTINGS-------------
 
 echoSpacing = 4.4; %ms;
-path = "C:\Users\Stefan Menzel\Desktop\Matlab\MR_Data\2024_04_19\Urea\T2Urea\123";
+path = "D:\Matlab\MR_Data\Preliminary Measurements\Lactate\T2Lac\54";
 chemicalSpecies = "Urea"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
 outlierIndices = [];
