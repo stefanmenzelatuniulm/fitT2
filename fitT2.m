@@ -4,9 +4,9 @@ clc;
 
 %-------------SETTINGS-------------
 
-echoSpacing = 4.4; %ms;
-path = "D:\Matlab\MR_Data\Preliminary Measurements\Lactate\T2Lac\54";
-chemicalSpecies = "Urea"; %Name(s) of the chemical species
+echoSpacing = 173.9; %ms; of the gradient echoes, not of the spin echoes!
+path = "D:\Matlab\MR_Data\Preliminary Measurements\Ethylacetate\T2EthAc\nonGd\119";
+chemicalSpecies = "Ethylacetate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
 outlierIndices = [];
 
