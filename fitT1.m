@@ -10,11 +10,12 @@ clc;
 %tau = [0 2632.3 3158.6 100 250 527.3 1053.5 1579.8 2106.1 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau = [0 100 250 527.3 1053.5 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau = [0 100 250 527.3 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
-tau=[500 1000 1500 2000 2500 3000 3500 4000 4500 5000 6000 7000 8000 9000 10000 13333.33 16666.66 20000 23333.33 26666.66 30000 33333.33 36666.66 40000 43333.33 46666.66 50000];
-folderName = "D:\Matlab\MR_Data\Preliminary Measurements\Ethylacetate\T1EthAc\Gd";
-chemicalSpecies = "Ethylacetate"; %Name(s) of the chemical species
+%tau=[500 1000 1500 2000 2500 3000 3500 4000 4500 5000 6000 7000 8000 9000 10000 13333.33 16666.66 20000 23333.33 26666.66 30000 33333.33 36666.66 40000 43333.33 46666.66 50000];
+tau = [100 160 400 630 1000 1580 2510 3580 6310 10000 13500 16860 26120 33000 39810 50168];
+folderName = "D:\Matlab\MR_Data\Preliminary Measurements\AlanineNonGd\T1AlaNonGd";
+chemicalSpecies = "Alanine"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
-outlierIndices = [];
+outlierIndices = [2 4 9 10 11 12 13];
 
 %-------------END OF SETTINGS-------------
 
