@@ -11,17 +11,22 @@ clc;
 %tau = [0 100 250 527.3 1053.5 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau = [0 100 250 527.3 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau=[500 1000 1500 2000 2500 3000 3500 4000 4500 5000 6000 7000 8000 9000 10000 13333.33 16666.66 20000 23333.33 26666.66 30000 33333.33 36666.66 40000 43333.33 46666.66 50000];
-tau = [100 160 400 630 1000 1580 2510 3580 6310 10000 13500 16860 26120 33000 39810 50168];
-folderName = "D:\Matlab\MR_Data\Preliminary Measurements\AlanineNonGd\T1AlaNonGd";
+tau = [100 160 250 400 630 1000 1580 2510 3980 6310 10000 15850 25120 39810 63100 100000];
+folderName = "G:\Daten\Matlab\MR_Data\07_08_2025\AlaT1";
 chemicalSpecies = "Alanine"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
-outlierIndices = [2 4 9 10 11 12 13];
+outlierIndices = [];
 
 %-------------END OF SETTINGS-------------
 
 d = dir(folderName);
 dFolders = d([d(:).isdir]);
 dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+for k = 1:length(dFolders)
+    dFolders(k).name=str2num(dFolders(k).name);
+end
+[~,index] = sortrows([dFolders.name].'); 
+dFolders = dFolders(index);
 subFolders = zeros(1, length(dFolders));
 Data = [];
 for k = 1:length(dFolders)
