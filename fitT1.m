@@ -11,10 +11,11 @@ clc;
 %tau = [0 100 250 527.3 1053.5 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau = [0 100 250 527.3 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau=[500 1000 1500 2000 2500 3000 3500 4000 4500 5000 6000 7000 8000 9000 10000 13333.33 16666.66 20000 23333.33 26666.66 30000 33333.33 36666.66 40000 43333.33 46666.66 50000];
-tau = [100 160 250 400 630 1000 1580 2510 3980 6310 10000 15850 25120 39810 63100 100000];
-folderName = "G:\Daten\Matlab\MR_Data\07_08_2025\AlaT1";
-chemicalSpecies = "Alanine"; %Name(s) of the chemical species
+tau = [10 21.69 47.05 102.05 221.35 480.12 1041.41 2258.86 4899.59 10627.47 23051.51 50000 80000];
+folderName = "C:\Users\stefan.menzel\Desktop\Daten\Messungen\27_11_2025\LacPB2\T1";
+chemicalSpecies = "Lactate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
+dyn = 2; %Number of dynamic to use
 outlierIndices = [];
 
 %-------------END OF SETTINGS-------------
@@ -33,10 +34,12 @@ for k = 1:length(dFolders)
     subFolders(1, k) = string(dFolders(k).name);
 end
 load(folderName+"\"+subFolders(1, k)+"\data.mat");
+Data = Data(:,:,:,:,dyn);
 dim = size(Data);
 Data2 = zeros([length(dFolders), dim]);
 for k = 1:length(dFolders)
     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+    Data = Data(:,:,:,:,dyn);
     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
 end
 Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
@@ -75,552 +78,568 @@ Data = Data(:, 1, 1);
 
 Data = Data/max(Data, [], "all"); %Normalize
 
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.png");
+% 
+% close all;
 
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped_absLast.png");
-
-close all;
-
-%Alternatively: Take maximum of signal
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
-Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
-Data = Data_odd+Data_even;
-Data = double(abs(Data)); %FID
-Data = squeeze(sum(Data, 5)); %Sum over coils
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    Data(k, 1, 1) = max(Data(k, :, :), [], "all");
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and max in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
-Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
-Data = Data_odd+Data_even;
-Data = double(abs(Data)); %FID
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    Data(k, 1, 1) = max(Data(k, :, :), [], "all");
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and center in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
-Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
-Data = Data_odd+Data_even;
-Data = double(abs(Data)); %FID
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-dim = size(Data);
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    if mod(dim(3), 2) == 0
-        Data1 = Data(k, :, ceil(end/2));
-        Data2 = Data(k, :, ceil(end/2)+1);
-        Data(k, :, 1) = (Data1+Data2)/2;
-    else
-        Data(k, :, 1) = Data(k, :, ceil(end/2));
-    end
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and mean in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
-Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
-Data = Data_odd+Data_even;
-Data = double(abs(Data)); %FID
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-Data = mean(Data, 3);
-dim = size(Data);
-clear Data2;
-
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.png");
-
-close all;
-
-%Alternatively: Assume that odd and even averages are not flipped
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data = sum(Data2, 13);
-Data = double(abs(Data)); %FID
-Data = squeeze(sum(Data, 5)); %Sum over coils
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    dim = size(Data);
-    if mod(dim(2), 2) == 0
-        Data1 = Data(k, ceil(end/2), :);
-        Data2 = Data(k, ceil(end/2)+1, :);
-        Data(k, 1, :) = (Data1+Data2)/2;
-    else
-        Data(k, 1, :) = Data(k, ceil(end/2), :);
-    end
-    if mod(dim(3), 2) == 0
-        Data1 = Data(k, :, ceil(end/2));
-        Data2 = Data(k, :, ceil(end/2)+1);
-        Data(k, :, 1) = (Data1+Data2)/2;
-    else
-        Data(k, :, 1) = Data(k, :, ceil(end/2));
-    end
-
-end
-
-Data = Data(:, 1, 1); 
-
-% [m, minIndex] = min(Data); %Remove bounce plot
-% for k = 1:minIndex-1
-%     Data(k) = -Data(k);
+% %Alternatively: Take maximum of signal
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
 % end
-
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.png");
-
-close all;
-
-%Alternatively: Take maximum of signal
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data = sum(Data2, 13);
-Data = double(abs(Data)); %FID
-Data = squeeze(sum(Data, 5)); %Sum over coils
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    Data(k, 1, 1) = max(Data(k, :, :), [], "all");
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and max in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data = sum(Data2, 13);
-Data = double(abs(Data)); %FID
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    Data(k, 1, 1) = max(Data(k, :, :), [], "all");
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and center in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data = sum(Data2, 13);
-Data = double(abs(Data)); %FID
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-dim = size(Data);
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    if mod(dim(3), 2) == 0
-        Data1 = Data(k, :, ceil(end/2));
-        Data2 = Data(k, :, ceil(end/2)+1);
-        Data(k, :, 1) = (Data1+Data2)/2;
-    else
-        Data(k, :, 1) = Data(k, :, ceil(end/2));
-    end
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.png");
-
-close all;
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
+% Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
+% Data = Data_odd+Data_even;
+% Data = double(abs(Data)); %FID
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     Data(k, 1, 1) = max(Data(k, :, :), [], "all");
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped_absLast.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and max in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
+% Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
+% Data = Data_odd+Data_even;
+% Data = double(abs(Data)); %FID
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     Data(k, 1, 1) = max(Data(k, :, :), [], "all");
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped_absLast.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and center in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
+% Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
+% Data = Data_odd+Data_even;
+% Data = double(abs(Data)); %FID
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% dim = size(Data);
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     if mod(dim(3), 2) == 0
+%         Data1 = Data(k, :, ceil(end/2));
+%         Data2 = Data(k, :, ceil(end/2)+1);
+%         Data(k, :, 1) = (Data1+Data2)/2;
+%     else
+%         Data(k, :, 1) = Data(k, :, ceil(end/2));
+%     end
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped_absLast.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and mean in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
+% Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
+% Data = Data_odd+Data_even;
+% Data = double(abs(Data)); %FID
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% Data = mean(Data, 3);
+% dim = size(Data);
+% clear Data2;
+% 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped_absLast.png");
+% 
+% close all;
+% 
+% %Alternatively: Assume that odd and even averages are not flipped
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data = sum(Data2, 13);
+% Data = double(abs(Data)); %FID
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     dim = size(Data);
+%     if mod(dim(2), 2) == 0
+%         Data1 = Data(k, ceil(end/2), :);
+%         Data2 = Data(k, ceil(end/2)+1, :);
+%         Data(k, 1, :) = (Data1+Data2)/2;
+%     else
+%         Data(k, 1, :) = Data(k, ceil(end/2), :);
+%     end
+%     if mod(dim(3), 2) == 0
+%         Data1 = Data(k, :, ceil(end/2));
+%         Data2 = Data(k, :, ceil(end/2)+1);
+%         Data(k, :, 1) = (Data1+Data2)/2;
+%     else
+%         Data(k, :, 1) = Data(k, :, ceil(end/2));
+%     end
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% 
+% % [m, minIndex] = min(Data); %Remove bounce plot
+% % for k = 1:minIndex-1
+% %     Data(k) = -Data(k);
+% % end
+% 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_absLast.png");
+% 
+% close all;
+% 
+% %Alternatively: Take maximum of signal
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data = sum(Data2, 13);
+% Data = double(abs(Data)); %FID
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     Data(k, 1, 1) = max(Data(k, :, :), [], "all");
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_absLast.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and max in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data = sum(Data2, 13);
+% Data = double(abs(Data)); %FID
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     Data(k, 1, 1) = max(Data(k, :, :), [], "all");
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_absLast.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and center in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data = sum(Data2, 13);
+% Data = double(abs(Data)); %FID
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% dim = size(Data);
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     if mod(dim(3), 2) == 0
+%         Data1 = Data(k, :, ceil(end/2));
+%         Data2 = Data(k, :, ceil(end/2)+1);
+%         Data(k, :, 1) = (Data1+Data2)/2;
+%     else
+%         Data(k, :, 1) = Data(k, :, ceil(end/2));
+%     end
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_absLast.png");
+% 
+% close all;
 
 %Alternatively: Take mean in readout direction and mean in phase encoding
 %direction
@@ -634,10 +653,12 @@ for k = 1:length(dFolders)
     subFolders(1, k) = string(dFolders(k).name);
 end
 load(folderName+"\"+subFolders(1, k)+"\data.mat");
+Data = Data(:,:,:,:,dyn);
 dim = size(Data);
 Data2 = zeros([length(dFolders), dim]);
 for k = 1:length(dFolders)
     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+    Data = Data(:,:,:,:,dyn);
     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
 end
 Data = sum(Data2, 13);
@@ -673,665 +694,685 @@ xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 
 ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
 
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_absLast.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_absLast.svg");
+%saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_absLast.svg");
 saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_absLast.png");
 
 close all;
 
-%Alternatively: abs first
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
-Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
-Data = Data_odd+Data_even;
-Data = squeeze(sum(Data, 5)); %Sum over coils
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    dim = size(Data);
-    if mod(dim(2), 2) == 0
-        Data1 = Data(k, ceil(end/2), :);
-        Data2 = Data(k, ceil(end/2)+1, :);
-        Data(k, 1, :) = (Data1+Data2)/2;
-    else
-        Data(k, 1, :) = Data(k, ceil(end/2), :);
-    end
-    if mod(dim(3), 2) == 0
-        Data1 = Data(k, :, ceil(end/2));
-        Data2 = Data(k, :, ceil(end/2)+1);
-        Data(k, :, 1) = (Data1+Data2)/2;
-    else
-        Data(k, :, 1) = Data(k, :, ceil(end/2));
-    end
-
-end
-
-Data = Data(:, 1, 1); 
-
-% [m, minIndex] = min(Data); %Remove bounce plot
-% for k = 1:minIndex-1
-%     Data(k) = -Data(k);
+% %Alternatively: abs first
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
 % end
-
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.png");
-
-close all;
-
-%Alternatively: Take maximum of signal
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
-Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
-Data = Data_odd+Data_even;
-Data = squeeze(sum(Data, 5)); %Sum over coils
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    Data(k, 1, 1) = max(Data(k, :, :), [], "all");
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and max in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
-Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
-Data = Data_odd+Data_even;
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    Data(k, 1, 1) = max(Data(k, :, :), [], "all");
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and center in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
-Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
-Data = Data_odd+Data_even;
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-dim = size(Data);
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    if mod(dim(3), 2) == 0
-        Data1 = Data(k, :, ceil(end/2));
-        Data2 = Data(k, :, ceil(end/2)+1);
-        Data(k, :, 1) = (Data1+Data2)/2;
-    else
-        Data(k, :, 1) = Data(k, :, ceil(end/2));
-    end
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and mean in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
-Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
-Data = Data_odd+Data_even;
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-Data = mean(Data, 3);
-dim = size(Data);
-clear Data2;
-
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.png");
-
-close all;
-
-%Alternatively: Assume that odd and even averages are not flipped
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data = sum(Data2, 13);
-Data = squeeze(sum(Data, 5)); %Sum over coils
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    dim = size(Data);
-    if mod(dim(2), 2) == 0
-        Data1 = Data(k, ceil(end/2), :);
-        Data2 = Data(k, ceil(end/2)+1, :);
-        Data(k, 1, :) = (Data1+Data2)/2;
-    else
-        Data(k, 1, :) = Data(k, ceil(end/2), :);
-    end
-    if mod(dim(3), 2) == 0
-        Data1 = Data(k, :, ceil(end/2));
-        Data2 = Data(k, :, ceil(end/2)+1);
-        Data(k, :, 1) = (Data1+Data2)/2;
-    else
-        Data(k, :, 1) = Data(k, :, ceil(end/2));
-    end
-
-end
-
-Data = Data(:, 1, 1); 
-
-% [m, minIndex] = min(Data); %Remove bounce plot
-% for k = 1:minIndex-1
-%     Data(k) = -Data(k);
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
 % end
-
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.png");
-
-close all;
-
-%Alternatively: Take maximum of signal
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data = sum(Data2, 13);
-Data = squeeze(sum(Data, 5)); %Sum over coils
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    Data(k, 1, 1) = max(Data(k, :, :), [], "all");
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and max in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data = sum(Data2, 13);
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    Data(k, 1, 1) = max(Data(k, :, :), [], "all");
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and center in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data = sum(Data2, 13);
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-dim = size(Data);
-clear Data2;
-
-for k = 1:length(dFolders)
-
-    if mod(dim(3), 2) == 0
-        Data1 = Data(k, :, ceil(end/2));
-        Data2 = Data(k, :, ceil(end/2)+1);
-        Data(k, :, 1) = (Data1+Data2)/2;
-    else
-        Data(k, :, 1) = Data(k, :, ceil(end/2));
-    end
-
-end
-
-Data = Data(:, 1, 1); 
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.png");
-
-close all;
-
-%Alternatively: Take mean in readout direction and mean in phase encoding
-%direction
-
-d = dir(folderName);
-dFolders = d([d(:).isdir]);
-dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
-subFolders = zeros(1, length(dFolders));
-Data = [];
-for k = 1:length(dFolders)
-    subFolders(1, k) = string(dFolders(k).name);
-end
-load(folderName+"\"+subFolders(1, k)+"\data.mat");
-dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
-for k = 1:length(dFolders)
-    load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
-end
-Data2 = double(abs(Data2)); %FID
-Data = sum(Data2, 13);
-Data = squeeze(sum(Data, 5)); %Sum over coils
-Data = mean(Data, 2);
-Data = mean(Data, 3);
-dim = size(Data);
-clear Data2;
-
-Data = Data/max(Data, [], "all"); %Normalize
-
-fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
-coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
-fttype = fittype(fitfunction, coefficients=coeffs);
-fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
-fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
-ft=fit(transpose(fitTau), fitData, fttype, options);
-coeffvals = coeffvalues(ft);
-ci = confint(ft, 0.95);
-str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
-annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
-hold on;
-ax = gca;
-plot(ax, ft, "r");
-xlim([0 max(tau)]);
-legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
-title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
-xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
-
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.fig");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.svg");
-saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.png");
-
-close all;
+% Data2 = double(abs(Data2)); %FID
+% Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
+% Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
+% Data = Data_odd+Data_even;
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     dim = size(Data);
+%     if mod(dim(2), 2) == 0
+%         Data1 = Data(k, ceil(end/2), :);
+%         Data2 = Data(k, ceil(end/2)+1, :);
+%         Data(k, 1, :) = (Data1+Data2)/2;
+%     else
+%         Data(k, 1, :) = Data(k, ceil(end/2), :);
+%     end
+%     if mod(dim(3), 2) == 0
+%         Data1 = Data(k, :, ceil(end/2));
+%         Data2 = Data(k, :, ceil(end/2)+1);
+%         Data(k, :, 1) = (Data1+Data2)/2;
+%     else
+%         Data(k, :, 1) = Data(k, :, ceil(end/2));
+%     end
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% 
+% % [m, minIndex] = min(Data); %Remove bounce plot
+% % for k = 1:minIndex-1
+% %     Data(k) = -Data(k);
+% % end
+% 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center_flipped.png");
+% 
+% close all;
+% 
+% %Alternatively: Take maximum of signal
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data2 = double(abs(Data2)); %FID
+% Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
+% Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
+% Data = Data_odd+Data_even;
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     Data(k, 1, 1) = max(Data(k, :, :), [], "all");
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max_flipped.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and max in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data2 = double(abs(Data2)); %FID
+% Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
+% Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
+% Data = Data_odd+Data_even;
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     Data(k, 1, 1) = max(Data(k, :, :), [], "all");
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max_flipped.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and center in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data2 = double(abs(Data2)); %FID
+% Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
+% Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
+% Data = Data_odd+Data_even;
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% dim = size(Data);
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     if mod(dim(3), 2) == 0
+%         Data1 = Data(k, :, ceil(end/2));
+%         Data2 = Data(k, :, ceil(end/2)+1);
+%         Data(k, :, 1) = (Data1+Data2)/2;
+%     else
+%         Data(k, :, 1) = Data(k, :, ceil(end/2));
+%     end
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center_flipped.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and mean in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data2 = double(abs(Data2)); %FID
+% Data_odd = sum(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 1:2:end), 13);
+% Data_even = sum(flip(Data2(:, :, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 13);
+% Data = Data_odd+Data_even;
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% Data = mean(Data, 3);
+% dim = size(Data);
+% clear Data2;
+% 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean_flipped.png");
+% 
+% close all;
+% 
+% %Alternatively: Assume that odd and even averages are not flipped
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data2 = double(abs(Data2)); %FID
+% Data = sum(Data2, 13);
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     dim = size(Data);
+%     if mod(dim(2), 2) == 0
+%         Data1 = Data(k, ceil(end/2), :);
+%         Data2 = Data(k, ceil(end/2)+1, :);
+%         Data(k, 1, :) = (Data1+Data2)/2;
+%     else
+%         Data(k, 1, :) = Data(k, ceil(end/2), :);
+%     end
+%     if mod(dim(3), 2) == 0
+%         Data1 = Data(k, :, ceil(end/2));
+%         Data2 = Data(k, :, ceil(end/2)+1);
+%         Data(k, :, 1) = (Data1+Data2)/2;
+%     else
+%         Data(k, :, 1) = Data(k, :, ceil(end/2));
+%     end
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% 
+% % [m, minIndex] = min(Data); %Remove bounce plot
+% % for k = 1:minIndex-1
+% %     Data(k) = -Data(k);
+% % end
+% 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [-1 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_center.png");
+% 
+% close all;
+% 
+% %Alternatively: Take maximum of signal
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data2 = double(abs(Data2)); %FID
+% Data = sum(Data2, 13);
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     Data(k, 1, 1) = max(Data(k, :, :), [], "all");
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_max.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and max in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data2 = double(abs(Data2)); %FID
+% Data = sum(Data2, 13);
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     Data(k, 1, 1) = max(Data(k, :, :), [], "all");
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_max.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and center in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data2 = double(abs(Data2)); %FID
+% Data = sum(Data2, 13);
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% dim = size(Data);
+% clear Data2;
+% 
+% for k = 1:length(dFolders)
+% 
+%     if mod(dim(3), 2) == 0
+%         Data1 = Data(k, :, ceil(end/2));
+%         Data2 = Data(k, :, ceil(end/2)+1);
+%         Data(k, :, 1) = (Data1+Data2)/2;
+%     else
+%         Data(k, :, 1) = Data(k, :, ceil(end/2));
+%     end
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_center.png");
+% 
+% close all;
+% 
+% %Alternatively: Take mean in readout direction and mean in phase encoding
+% %direction
+% 
+% d = dir(folderName);
+% dFolders = d([d(:).isdir]);
+% dFolders = dFolders(~ismember({dFolders(:).name},{'.','..'}));
+% subFolders = zeros(1, length(dFolders));
+% Data = [];
+% for k = 1:length(dFolders)
+%     subFolders(1, k) = string(dFolders(k).name);
+% end
+% load(folderName+"\"+subFolders(1, k)+"\data.mat");
+% Data = Data(:,:,:,:,dyn);
+% dim = size(Data);
+% Data2 = zeros([length(dFolders), dim]);
+% for k = 1:length(dFolders)
+%     load(folderName+"\"+subFolders(1, k)+"\data.mat");
+%     Data = Data(:,:,:,:,dyn);
+%     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+% end
+% Data2 = double(abs(Data2)); %FID
+% Data = sum(Data2, 13);
+% Data = squeeze(sum(Data, 5)); %Sum over coils
+% Data = mean(Data, 2);
+% Data = mean(Data, 3);
+% dim = size(Data);
+% clear Data2;
+% 
+% Data = Data/max(Data, [], "all"); %Normalize
+% 
+% fig = figure('WindowState', 'maximized');
+% plot(tau, Data, "+");
+% fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+% coeffs=["M0" "C" "T1"];
+% options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+% fttype = fittype(fitfunction, coefficients=coeffs);
+% fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+% fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
+% ft=fit(transpose(fitTau), fitData, fttype, options);
+% coeffvals = coeffvalues(ft);
+% ci = confint(ft, 0.95);
+% str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3));
+% annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+% hold on;
+% ax = gca;
+% plot(ax, ft, "r");
+% xlim([0 max(tau)]);
+% legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+% title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+% xlabel("$\tau$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+% 
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.fig");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.svg");
+% saveas(fig, folderName+"\"+num2str(subFolders(1,1))+chemicalSpecies+"_IRDecay_mean_mean.png");
+% 
+% close all;
 
 
