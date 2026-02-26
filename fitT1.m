@@ -11,11 +11,12 @@ clc;
 %tau = [0 100 250 527.3 1053.5 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau = [0 100 250 527.3 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau=[500 1000 1500 2000 2500 3000 3500 4000 4500 5000 6000 7000 8000 9000 10000 13333.33 16666.66 20000 23333.33 26666.66 30000 33333.33 36666.66 40000 43333.33 46666.66 50000];
-tau = [10 21.69 47.05 102.05 221.35 480.12 1041.41 2258.86 4899.59 10627.47 23051.51 50000 80000];
-folderName = "C:\Users\stefan.menzel\Desktop\Daten\Messungen\27_11_2025\LacPB2\T1";
-chemicalSpecies = "Lactate"; %Name(s) of the chemical species
+tau = [0 10 13 18 23 31 41 54 71 94 125 165 219 290 384 508 673 891 1180 1562 2068 2739 3626 4800 6355 8414 11140 14749 19528 25854 34229 45318 60000];
+%tau = [0 10 13 18 23 31 41 54 71 94 125 165 219 290 384 508 673 891 1180 1562 2068 2739 3626 4800 6355 8414 11140];
+folderName = "C:\Users\stefan.menzel\Desktop\Daten\Messungen\25_02_2026_T1T2Messungenvonallem\UreaT1T2\T1\TSE";
+chemicalSpecies = "Urea"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
-dyn = 2; %Number of dynamic to use
+dyn = 1; %Number of dynamic to use
 outlierIndices = [];
 
 %-------------END OF SETTINGS-------------
@@ -33,6 +34,7 @@ Data = [];
 for k = 1:length(dFolders)
     subFolders(1, k) = string(dFolders(k).name);
 end
+
 load(folderName+"\"+subFolders(1, k)+"\data.mat");
 Data = Data(:,:,:,:,dyn);
 dim = size(Data);
@@ -652,6 +654,7 @@ Data = [];
 for k = 1:length(dFolders)
     subFolders(1, k) = string(dFolders(k).name);
 end
+subFolders = sort(subFolders);% TODO: ADD EVERYWHERE 
 load(folderName+"\"+subFolders(1, k)+"\data.mat");
 Data = Data(:,:,:,:,dyn);
 dim = size(Data);
@@ -662,10 +665,10 @@ for k = 1:length(dFolders)
     Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
 end
 Data = sum(Data2, 13);
-Data = double(abs(Data)); %FID
 Data = squeeze(sum(Data, 5)); %Sum over coils
 Data = mean(Data, 2);
 Data = mean(Data, 3);
+Data = double(abs(Data)); %FID
 dim = size(Data);
 clear Data2;
 
