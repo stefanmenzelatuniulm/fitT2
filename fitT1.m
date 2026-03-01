@@ -11,13 +11,19 @@ clc;
 %tau = [0 100 250 527.3 1053.5 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau = [0 100 250 527.3 1579.8 2106.1 2632.3 3158.6 4211.1 5263.6 6316.2 7368.7 8421.2 9473.7 10000];
 %tau=[500 1000 1500 2000 2500 3000 3500 4000 4500 5000 6000 7000 8000 9000 10000 13333.33 16666.66 20000 23333.33 26666.66 30000 33333.33 36666.66 40000 43333.33 46666.66 50000];
-tau = [0 10 13 18 23 31 41 54 71 94 125 165 219 290 384 508 673 891 1180 1562 2068 2739 3626 4800 6355 8414 11140 14749 19528 25854 34229 45318 60000];
+%tau = [0 10 13 18 23 31 41 54 71 94 125 165 219 290 384 508 673 891 1180 1562 2068 2739 3626 4800 6355 8414 11140 14749 19528 25854 34229 45318 60000];
 %tau = [0 10 13 18 23 31 41 54 71 94 125 165 219 290 384 508 673 891 1180 1562 2068 2739 3626 4800 6355 8414 11140];
-folderName = "C:\Users\stefan.menzel\Desktop\Daten\Messungen\25_02_2026_T1T2Messungenvonallem\UreaT1T2\T1\TSE";
-chemicalSpecies = "Urea"; %Name(s) of the chemical species
+tau = [0 1000 1160 1350 1560 1810 2100 2440 2830 3280 3810 4420 5120 5950 6900 8000 9280 10770 12500 14500 16820 19510 22640 26260 30470 35350 41010 47580 55200 64040 74300 86200 94000];
+folderName = "C:\Users\stefan.menzel\Desktop\Daten\Messungen\25_02_2026_T1T2Messungenvonallem\BicT1New";
+chemicalSpecies = "Bicarbonate"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
 dyn = 1; %Number of dynamic to use
 outlierIndices = [];
+isSpectrum = false;
+startChannel = 3;
+endChannel = 3;
+startAverage = 3;
+endAverage = 8;
 
 %-------------END OF SETTINGS-------------
 
@@ -51,27 +57,27 @@ Data = double(abs(Data)); %FID
 Data = squeeze(sum(Data, 5)); %Sum over coils
 clear Data2;
 
-for k = 1:length(dFolders)
-
-    dim = size(Data);
-    if mod(dim(2), 2) == 0
-        Data1 = Data(k, ceil(end/2), :);
-        Data2 = Data(k, ceil(end/2)+1, :);
-        Data(k, 1, :) = (Data1+Data2)/2;
-    else
-        Data(k, 1, :) = Data(k, ceil(end/2), :);
-    end
-    if mod(dim(3), 2) == 0
-        Data1 = Data(k, :, ceil(end/2));
-        Data2 = Data(k, :, ceil(end/2)+1);
-        Data(k, :, 1) = (Data1+Data2)/2;
-    else
-        Data(k, :, 1) = Data(k, :, ceil(end/2));
-    end
-
-end
-
-Data = Data(:, 1, 1); 
+% for k = 1:length(dFolders)
+% 
+%     dim = size(Data);
+%     if mod(dim(2), 2) == 0
+%         Data1 = Data(k, ceil(end/2), :);
+%         Data2 = Data(k, ceil(end/2)+1, :);
+%         Data(k, 1, :) = (Data1+Data2)/2;
+%     else
+%         Data(k, 1, :) = Data(k, ceil(end/2), :);
+%     end
+%     if mod(dim(3), 2) == 0
+%         Data1 = Data(k, :, ceil(end/2));
+%         Data2 = Data(k, :, ceil(end/2)+1);
+%         Data(k, :, 1) = (Data1+Data2)/2;
+%     else
+%         Data(k, :, 1) = Data(k, :, ceil(end/2));
+%     end
+% 
+% end
+% 
+% Data = Data(:, 1, 1); 
 
 % [m, minIndex] = min(Data); %Remove bounce plot
 % for k = 1:minIndex-1
@@ -656,16 +662,24 @@ for k = 1:length(dFolders)
 end
 subFolders = sort(subFolders);% TODO: ADD EVERYWHERE 
 load(folderName+"\"+subFolders(1, k)+"\data.mat");
+if isSpectrum
+    nChannels = 4;
+    Data = repmat(Data,[1 1 1 nChannels]);
+end
 Data = Data(:,:,:,:,dyn);
 dim = size(Data);
-Data2 = zeros([length(dFolders), dim]);
+Data2 = zeros([length(dFolders), dim(1), dim(2)]);
 for k = 1:length(dFolders)
     load(folderName+"\"+subFolders(1, k)+"\data.mat");
-    Data = Data(:,:,:,:,dyn);
-    Data2(k, :, :, :, :, :, :, :, :, :, :, :, :) = Data;
+    if isSpectrum
+        nChannels = 4;
+        Data = repmat(Data,[1 1 1 nChannels]);
+    end
+    Data = squeeze(sum(mean(Data(:,:,:,startChannel:endChannel,dyn,:,:,:,:,:,:,startAverage:endAverage),12),4)); %Adapt to needs
+    Data2(k, :, :) = Data;
 end
-Data = sum(Data2, 13);
-Data = squeeze(sum(Data, 5)); %Sum over coils
+Data = Data2;%Data = sum(Data2, 13);
+%Data = squeeze(sum(Data, 5)); %Sum over coils
 Data = mean(Data, 2);
 Data = mean(Data, 3);
 Data = double(abs(Data)); %FID
@@ -675,10 +689,10 @@ clear Data2;
 Data = Data/max(Data, [], "all"); %Normalize
 
 fig = figure('WindowState', 'maximized');
-plot(tau, Data, "+");
-fitfunction="abs(M0*(1-C*exp(-x/T1)))";
+plot(tau, Data, 'Marker','o', 'MarkerFaceColor', 'blue', 'MarkerEdgeColor','blue','MarkerSize',8,'LineStyle','none');
+fitfunction="abs(M0*(1-C*(exp(-x/T1))))";
 coeffs=["M0" "C" "T1"];
-options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [1 inf inf], 'StartPoint', [1 2 9000]);
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [inf inf inf], 'StartPoint', [1 2 9000]);
 fttype = fittype(fitfunction, coefficients=coeffs);
 fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
 fitTau = tau(setdiff(1:end, outlierIndices, "sorted"));
@@ -689,7 +703,8 @@ str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_1", coeffvals(3), ci(:, 3))
 annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
 hold on;
 ax = gca;
-plot(ax, ft, "r");
+fig2 = plot(ax, ft,'r');
+set(fig2,'lineWidth',3);
 xlim([0 max(tau)]);
 legend("Signal", "Fit with $$|M_0(1-C e^{-\frac{\tau}{T_1}})|$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
 title("$T_1$ Relaxation of "+chemicalSpecies+" during IR", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);

@@ -4,13 +4,15 @@ clc;
 
 %-------------SETTINGS-------------
 
-echoSpacing = 4.2; %ms; of the gradient echoes, not of the spin echoes!
-path = "C:\Users\stefan.menzel\Desktop\Daten\Messungen\25_02_2026_T1T2Messungenvonallem\UreaT1T2\T2\4";
-chemicalSpecies = "Urea"; %Name(s) of the chemical species
+echoSpacing = 32.3; %ms; of the gradient echoes, not of the spin echoes!
+path = "C:\Users\stefan.menzel\Desktop\Daten\Messungen\25_02_2026_T1T2Messungenvonallem\AlanineNoGdNewT2\110";
+chemicalSpecies = "AlanineNoGd"; %Name(s) of the chemical species
 annotationXOffset = 0; %Offset of fit parameter annotation in X direction, if there is significant overlap with the plot
-outlierIndices = [];
+outlierIndices = [];%linspace(512,768,768-512+1);
 startChannel = 3;
 endChannel = 3;
+averagePosition = 5;
+maxMeanIndex = 100;
 
 %-------------END OF SETTINGS-------------
 
@@ -24,11 +26,11 @@ load(path+"\par.mat");
 
 dim = size(Data);
 
-%Data = sum(Data, 12); 
+%Data = sum(Data, averagePosition); 
 %Sum over averages
 %CARE: ODD AND EVEN AVERAGES ARE FLIPPED
-Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 Data = Data_odd+Data_even;
 Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
 
@@ -83,13 +85,13 @@ saveas(fig, path+chemicalSpecies+"_TSEDecay_absLast_center.png");
 load(path+"\data.mat");
 load(path+"\par.mat");
 
-%Data = sum(Data, 12); 
+%Data = sum(Data, averagePosition); 
 %Sum over averages
-Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 Data = Data_odd+Data_even;
 Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
-Data = mean(Data, 1); %Mean over readout direction
+Data = mean(Data(1:maxMeanIndex,:), 1); %Mean over readout direction
 Data = double(abs(Data)); %FID
 Data = transpose(Data/max(Data, [], "all")); %Normalize
 
@@ -129,14 +131,14 @@ close all;
 load(path+"\data.mat");
 load(path+"\par.mat");
 
-%Data = sum(Data, 12); 
+%Data = sum(Data, averagePosition); 
 %Sum over averages
-Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 Data = Data_odd+Data_even;
 Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
 Data = double(abs(Data)); %FID
-Data = mean(Data, 1); %Mean over readout direction
+Data = mean(Data(1:maxMeanIndex,:), 1); %Mean over readout direction
 Data = transpose(Data/max(Data, [], "all")); %Normalize
 
 %Determine echo placements. Each echo corresponds to 1 line in k-space
@@ -175,13 +177,14 @@ close all;
 load(path+"\data.mat");
 load(path+"\par.mat");
 
-%Data = sum(Data, 12); 
+%Data = sum(Data, averagePosition); 
 %Sum over averages
-Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 Data = Data_odd+Data_even;
+Data = sum(Data,averagePosition);
 Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
-Data = mean(Data, 1); %Mean over readout direction
+Data = mean(Data(1:maxMeanIndex,:), 1); %Mean over readout direction
 Data = double(abs(Data)); %FID
 Data = transpose(Data/max(Data, [], "all")); %Normalize
 
@@ -221,14 +224,14 @@ close all;
 load(path+"\data.mat");
 load(path+"\par.mat");
 
-%Data = sum(Data, 12); 
+%Data = sum(Data, averagePosition); 
 %Sum over averages
-Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 Data = Data_odd+Data_even;
 Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
 Data = double(abs(Data)); %FID
-Data = mean(Data, 1); %Mean over readout direction
+Data = mean(Data(1:maxMeanIndex,:), 1); %Mean over readout direction
 Data = transpose(Data/max(Data, [], "all")); %Normalize
 
 %Determine echo placements. Each echo corresponds to 1 line in k-space
@@ -268,10 +271,10 @@ close all;
 load(path+"\data.mat");
 load(path+"\par.mat");
 
-%Data = sum(Data, 12); 
+%Data = sum(Data, averagePosition); 
 %Sum over averages
-Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 Data = Data_odd+Data_even;
 Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
 Data = max(Data, [], 1); 
@@ -310,15 +313,61 @@ saveas(fig, path+chemicalSpecies+"_TSEDecay_max_absLast.svg");
 saveas(fig, path+chemicalSpecies+"_TSEDecay_max_absLast.png");
 
 close all;
+
+load(path+"\data.mat");
+load(path+"\par.mat");
+
+%Data = sum(Data, averagePosition); 
+%Sum over averages
+Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
+Data = Data_odd+Data_even;
+Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
+Data = max(Data, [], 1); 
+Data = double(abs(Data)); %FID
+Data = transpose(Data/max(Data, [], "all")); %Normalize
+
+%Determine echo placements. Each echo corresponds to 1 line in k-space
+dim = size(Data);
+numberOfPhaseEncodingSteps = dim(1);
+X = transpose(echoSpacing:echoSpacing:echoSpacing*numberOfPhaseEncodingSteps);
+
+fig = figure('WindowState', 'maximized');
+plot(X, Data, "+");
+fitfunction="C+M0*exp(-x/T2)";
+coeffs=["C" "M0" "T2"];
+options=fitoptions('Method', 'NonlinearLeastSquares', 'Lower', [0 0 0.1], 'Upper', [0 1 inf], 'StartPoint', [0 0 1000]);
+fttype = fittype(fitfunction, coefficients=coeffs);
+fitData = Data(setdiff(1:end, outlierIndices, "sorted"));
+fitX = X(setdiff(1:end, outlierIndices, "sorted"));
+ft=fit(fitX, fitData, fttype, options);
+coeffvals = coeffvalues(ft);
+ci = confint(ft, 0.95);
+str1 = sprintf('\n %s = %0.9f   (%0.9f   %0.9f)', "T_2", coeffvals(3), ci(:, 3));
+annotation('textbox', [0.53+annotationXOffset 0.69 0.2 0.2], 'String', ['Relevant fit coefficient with 95% confidence bounds: ', strtrim(str1+"   (ms)")], 'EdgeColor', 'none', "FitBoxToText", "on", "Color", "r", "FontSize", 8);
+hold on;
+ax = gca;
+plot(ax, ft, "r");
+xlim([0 max(X)]);
+legend("Signal", "Fit with $$C+M_0 e^{-\frac{t}{T_2}}$$", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 10, "Location", "Northwest");
+title("$T_2$ Relaxation of "+chemicalSpecies+" during TSE", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 16);
+xlabel("$t$ (ms)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+ylabel("Amplitude (a. u.)", "interpreter", "latex", 'fontweight', 'bold', 'fontsize', 14);
+
+saveas(fig, path+chemicalSpecies+"_TSEDecay_max_absLast_zeroC.fig");
+saveas(fig, path+chemicalSpecies+"_TSEDecay_max_absLast_zeroC.svg");
+saveas(fig, path+chemicalSpecies+"_TSEDecay_max_absLast_zeroC.png");
+
+close all;
 % 
 % %ALTERNATIVELY: Echo Tops are located at the row with the overall max signal
 % load(path+"\data.mat");
 % load(path+"\par.mat");
 % 
-% %Data = sum(Data, 12); 
+% %Data = sum(Data, averagePosition); 
 % %Sum over averages
-% Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-% Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+% Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+% Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 % Data = Data_odd+Data_even;
 % Data = double(abs(Data)); %FID
 % Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
@@ -367,12 +416,12 @@ close all;
 % 
 % dim = size(Data);
 % 
-% %Data = sum(Data, 12); 
+% %Data = sum(Data, averagePosition); 
 % %Sum over averages
 % %CARE: ODD AND EVEN AVERAGES ARE FLIPPED
 % Data = double(abs(Data)); %FID
-% Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-% Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+% Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+% Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 % Data = Data_odd+Data_even;
 % Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
 % 
@@ -425,11 +474,11 @@ close all;
 % load(path+"\data.mat");
 % load(path+"\par.mat");
 % 
-% %Data = sum(Data, 12); 
+% %Data = sum(Data, averagePosition); 
 % %Sum over averages
 % Data = double(abs(Data)); %FID
-% Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-% Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+% Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+% Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 % Data = Data_odd+Data_even;
 % Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
 % Data = mean(Data, 1); %Mean over readout direction
@@ -472,11 +521,11 @@ close all;
 % load(path+"\data.mat");
 % load(path+"\par.mat");
 % 
-% %Data = sum(Data, 12); 
+% %Data = sum(Data, averagePosition); 
 % %Sum over averages
 % Data = double(abs(Data)); %FID
-% Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-% Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+% Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+% Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 % Data = Data_odd+Data_even;
 % Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
 % Data = max(Data, [], 1); 
@@ -519,11 +568,11 @@ close all;
 % load(path+"\data.mat");
 % load(path+"\par.mat");
 % 
-% %Data = sum(Data, 12); 
+% %Data = sum(Data, averagePosition); 
 % %Sum over averages
 % Data = double(abs(Data)); %FID
-% Data_odd = sum(Data(:, :, :, :, :, :, :, :, :, :, :, 1:2:end), 12);
-% Data_even = sum(flip(Data(:, :, :, :, :, :, :, :, :, :, :, 2:2:end), 2), 12);
+% Data_odd = sum(Data(:, :, :, :, 1:2:end), averagePosition);
+% Data_even = sum(flip(Data(:, :, :, :, 2:2:end), 1), averagePosition);
 % Data = Data_odd+Data_even;
 % Data = squeeze(sum(Data(:,:,:,startChannel:endChannel), 4)); %Sum over coils
 % m = max(Data, [], "all"); 
